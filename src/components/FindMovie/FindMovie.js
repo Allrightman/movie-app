@@ -4,26 +4,28 @@ import PropTypes from 'prop-types';
 import './FindMovie.css';
 import classNames from 'classnames';
 
-import { getMovieByTitle } from '../../api/movies';
+import {getMovieByTitle, searchMoviesByTitle} from '../../api/movies';
 
 import { MovieCard } from '../MovieCard';
+import {MovieCardSearch} from "../MovieCardSearch";
 
-export const FindMovie = ({ onAdd }) => {
-  const [movie, setMovie] = useState(null);
+export const FindMovie = ({ onAdd, onDelete }) => {
+  const [movies, setMovies] = useState([]);
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
 
   const movieRequest = () => {
-    getMovieByTitle(title)
+    searchMoviesByTitle(title)
       .then((result) => {
         if (result.Response === 'True') {
-          setMovie({
-            title: result.Title,
-            description: result.Plot,
-            imgUrl: result.Poster,
-            imdbUrl: `https://www.imdb.com/title/${result.imdbID}`,
-            imdbId: result.imdbID,
-          });
+          const moviesFromServer = result.Search.map(movie => ({
+              title: movie.Title,
+              imgUrl: movie.Poster,
+              imdbUrl: `https://www.imdb.com/title/${movie.imdbID}`,
+              imdbId: movie.imdbID,
+            }
+          ))
+         setMovies(moviesFromServer);
         } else {
           setTitleError(true);
           setTitle('');
@@ -34,16 +36,6 @@ export const FindMovie = ({ onAdd }) => {
   const handleTitleChange = ({ target }) => {
     setTitle(target.value);
     setTitleError(false);
-  };
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-
-    if (movie) {
-      onAdd(movie);
-      setMovie(null);
-      setTitle('');
-    }
   };
 
   return (
@@ -64,7 +56,7 @@ export const FindMovie = ({ onAdd }) => {
               onChange={handleTitleChange}
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
-                  movieRequest()
+                  movieRequest();
                 }
               }}
             />
@@ -87,23 +79,18 @@ export const FindMovie = ({ onAdd }) => {
               Find a movie
             </button>
           </div>
-
-          <div className="control">
-            <button
-              type="submit"
-              className="button is-primary"
-              onClick={handleFormSubmit}
-            >
-              Add to the list
-            </button>
-          </div>
         </div>
       </form>
 
-      <div className="container">
-        <h2 className="title">Preview</h2>
-        {movie && (
-          <MovieCard {...movie} />
+      <div className="movies">
+        {movies && (
+          movies.map(movie => (
+            <MovieCardSearch
+              movie={movie}
+              onAdd={onAdd}
+              onDelete={onDelete}
+            />
+          ))
         )}
       </div>
     </>

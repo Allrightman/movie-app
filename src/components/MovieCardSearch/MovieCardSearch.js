@@ -1,10 +1,10 @@
 import React from 'react';
 
-import './MovieCard.css';
+import './MovieCardSearch.css';
 
 import PropTypes from 'prop-types';
 
-export const MovieCard = ({ movie }) => (
+export const MovieCardSearch = ({ movie, onAdd }) => (
   <div className="card">
     <div className="card-image">
       <figure className="image is-4by3">
@@ -34,11 +34,18 @@ export const MovieCard = ({ movie }) => (
         <br />
         <a href={movie.imdbUrl}>IMDB</a>
       </div>
+
+      <button
+        onClick={() => onAdd(movie)}
+        className="button is-light"
+      >
+        Add to favorite
+      </button>
     </div>
   </div>
 );
 
-MovieCard.propTypes = {
+MovieCardSearch.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   imgUrl: PropTypes.string.isRequired,

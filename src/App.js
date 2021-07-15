@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, Route } from 'react-router-dom';
 
 import './App.css';
 
@@ -16,14 +17,33 @@ export const App = () => {
     }
   };
 
-  return (
+  const deleteMovie = (imdbId) => {
+    const filteredMovies = movies.filter(movie => movie.imdbId !== imdbId);
+    setMovies(filteredMovies);
+  };
+
+  return <>
+    <nav className="navbar">
+      <div className="navbar-brand">
+        <Link className="navbar-item" to="/home">
+          Home
+        </Link>
+        <Link className="navbar-item" to="/favorite">
+          Favorite movies
+        </Link>
+      </div>
+    </nav>
+
     <div className="page">
-      <div className="page-content">
-        <MoviesList movies={movies} />
-      </div>
-      <div className="sidebar">
-        <FindMovie onAdd={addMovie} />
-      </div>
+      <Route path="/home">
+        <FindMovie onAdd={addMovie} onDelete={deleteMovie} />
+      </Route>
+      <Route path="/favorite">
+        <div className="page-content">
+          <h2 className="subtitle">My favorite movies</h2>
+          <MoviesList movies={movies} />
+        </div>
+      </Route>
     </div>
-  );
+  </>
 };

@@ -14,5 +14,3 @@ export const remove = url => request(url, { method: 'DELETE' });
 export const getMovieByTitle = title => request('t=' + title);
 
 export const searchMoviesByTitle = title => request('s=' + title);
-
-export const deleteMovie = movieId => remove('i=' + movieId);
